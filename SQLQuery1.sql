@@ -73,6 +73,7 @@ regioes AS (
 resumo_por_pais AS (
     SELECT 
         v.Ano,
+        v.Mes,
         r.Pais,
         SUM(v.QtdeVendida) AS QtdeVendida,
         SUM(ISNULL(c.QtdeComprada, 0)) AS QtdeComprada,
@@ -87,10 +88,11 @@ resumo_por_pais AS (
     LEFT JOIN stock_calc s ON v.ProductID = s.ProductID AND v.Ano = s.Ano AND v.Mes = s.Mes
     LEFT JOIN custo_operacional co ON v.ProductID = co.ProductID
     LEFT JOIN regioes r ON v.TerritoryID = r.TerritoryID
-    GROUP BY v.Ano, r.Pais
+    GROUP BY v.Ano, v.Mes, r.Pais
 )
 SELECT 
     Ano,
+    Mes,
     Pais,
     QtdeVendida,
     QtdeComprada,
@@ -103,4 +105,5 @@ SELECT
     ROUND((LucroBrutoMensal * 1.0 / NULLIF(ReceitaMensalBruta, 0)) * 100, 2) AS MargemBrutaPercent,
     ROUND((LucroOperacional * 1.0 / NULLIF(ReceitaMensalBruta, 0)) * 100, 2) AS MargemOperacionalPercent
 FROM resumo_por_pais
-ORDER BY Ano, Pais;
+ORDER BY Ano, Mes, Pais;
+
